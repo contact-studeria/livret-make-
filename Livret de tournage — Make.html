@@ -1,0 +1,618 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Livret de tournage — Make</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f0038; --soft:#4a4a6a; --muted:#8a8aa0;
+  --accent:#7b1ad5; --accent-soft:#f3ecfb;
+  --surface:#ffffff; --white:#ffffff; --panel:#f7f7fa;
+  --border:#e3e2e8; --border-strong:#cfcdd8;
+  --alert:#b42318;
+  --radius:10px; --rlg:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--surface);line-height:1.7}
+
+.sidebar{position:fixed;top:0;left:0;width:290px;height:100vh;background:var(--ink);
+  padding:26px 14px;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar .logo{font-size:18px;color:#fff;font-weight:700;padding:0 10px}
+.sidebar .sub{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;
+  letter-spacing:1.6px;margin:5px 0 22px;padding:0 10px}
+.nav-section{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;
+  letter-spacing:1.4px;padding:14px 10px 6px;font-weight:700}
+.sidebar a{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;margin-bottom:1px;
+  color:rgba(255,255,255,.62);text-decoration:none;font-size:13px;font-weight:400;
+  border-radius:6px;line-height:1.4;transition:.15s}
+.sidebar a:hover,.sidebar a.active{background:rgba(255,255,255,.08);color:#fff}
+.sidebar .n{font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:rgba(255,255,255,.35);min-width:20px;flex-shrink:0}
+.sidebar .div{height:1px;background:rgba(255,255,255,.1);margin:14px 10px}
+.toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--ink);
+  color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:18px;cursor:pointer}
+
+.main{margin-left:290px;min-height:100vh}
+.hero{background:var(--ink);padding:56px 50px 48px}
+.hero-c{max-width:760px}
+.badge{display:inline-block;color:rgba(255,255,255,.5);font-size:11px;font-weight:600;
+  letter-spacing:1.4px;text-transform:uppercase;margin-bottom:14px}
+.hero h1{font-size:clamp(28px,4vw,40px);color:#fff;font-weight:700;line-height:1.2;margin-bottom:12px}
+.hero h1 em{font-style:normal;color:#fff}
+.hero-c>p{font-size:16px;color:rgba(255,255,255,.6);max-width:600px;margin-bottom:26px}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap}
+.hero-tags span{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.75);
+  font-size:12.5px;background:rgba(255,255,255,.07);border-radius:6px;padding:6px 12px}
+.hero-tags .ic{font-size:13px;opacity:.75}
+
+.content{max-width:800px;margin:0 auto;padding:44px 32px 100px}
+.ch{margin-bottom:52px;scroll-margin-top:20px}
+.ch-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.ch-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--muted);
+  flex-shrink:0}
+.ch h2{font-size:23px;font-weight:700;line-height:1.25}
+.card{background:var(--white);border-radius:var(--rlg);padding:30px;border:1px solid var(--border)}
+.card p{margin-bottom:14px;color:var(--soft);font-size:15px}
+.card p:last-child{margin-bottom:0}
+.card strong{color:var(--ink);font-weight:600}
+.card h3{font-size:18px;font-weight:700;color:var(--ink);margin:34px 0 12px;
+  padding-top:18px;border-top:1px solid var(--border)}
+.card h3:first-child{margin-top:0;padding-top:0;border-top:none}
+.card h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1.1px;
+  text-transform:uppercase;margin:20px 0 8px}
+.card ul{margin:10px 0 14px 20px;color:var(--soft);font-size:15px}
+.card li{margin-bottom:6px}
+.card a{color:var(--accent);font-weight:600}
+
+.analogy,.prereq,.warning-big{background:var(--panel);border-radius:var(--radius);
+  padding:18px 22px;margin:18px 0;border:1px solid var(--border);border-left:3px solid var(--border-strong)}
+.warning-big{border-left-color:var(--alert)}
+.analogy .al,.prereq .pl,.warning-big .wl{font-weight:700;color:var(--ink);font-size:12px;
+  letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.warning-big .wl{color:var(--alert)}
+.analogy p,.prereq p,.prereq li,.warning-big p{font-size:14.5px;color:var(--soft);margin:0}
+.prereq ul{list-style:none;padding:0;margin:6px 0 0}
+.prereq li{padding:5px 0 5px 22px;position:relative}
+.prereq li::before{content:'\2610';position:absolute;left:0;color:var(--muted)}
+
+.steps{counter-reset:s;list-style:none;padding:0;margin:16px 0}
+.steps li{counter-increment:s;position:relative;padding:12px 14px 12px 46px;margin-bottom:6px;
+  background:var(--white);border-radius:var(--radius);border:1px solid var(--border);
+  font-size:14.5px;color:var(--soft)}
+.steps li::before{content:counter(s);position:absolute;left:14px;top:14px;
+  color:var(--muted);font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.steps li strong{color:var(--ink)}
+
+.tw{overflow-x:auto;margin:16px 0;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead{background:var(--panel)}
+thead th{padding:11px 14px;text-align:left;color:var(--ink);font-weight:700;font-size:11px;
+  text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;border-bottom:1px solid var(--border-strong)}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--soft);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+.vide{color:var(--muted);font-style:italic;font-size:12px}
+.cap{font-size:12.5px;color:var(--muted);margin:-6px 0 16px}
+
+.tip{display:flex;gap:12px;padding:16px 20px;border-radius:var(--radius);margin:16px 0;
+  background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--border-strong)}
+.tip.warn,.tip.err{border-left-color:var(--alert)}
+.tip-i{font-size:16px;flex-shrink:0;margin-top:1px;opacity:.8}
+.tip-c{font-size:14px;color:var(--soft)}
+.tip-c strong{color:var(--ink)}
+.tip-c>strong:first-child{display:block;margin-bottom:3px}
+
+.vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:16px 0}
+.vc{background:var(--white);border-radius:var(--radius);padding:16px;border:1px solid var(--border)}
+.vc .vt{font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px}
+.vc .vd{font-size:13px;color:var(--soft)}
+.vc .ve{font-size:12px;color:var(--muted);margin-top:5px}
+
+.flow{display:flex;align-items:center;gap:0;margin:20px 0;flex-wrap:wrap;justify-content:center}
+.flow-node{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
+  padding:12px 18px;text-align:center;min-width:120px}
+.flow-node .fl{font-size:20px;margin-bottom:4px;opacity:.8}
+.flow-node .fn2{font-weight:700;font-size:13px;color:var(--ink)}
+.flow-node .fd{font-size:11px;color:var(--muted)}
+.flow-arrow{font-size:18px;color:var(--muted);padding:0 8px;flex-shrink:0}
+
+.cbx{margin:16px 0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--panel)}
+.cbx-h{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 14px;border-bottom:1px solid var(--border)}
+.cbx-l{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.7px}
+.cbx-b{background:var(--white);color:var(--ink);border:1px solid var(--border-strong);border-radius:6px;
+  padding:5px 13px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+.cbx-b:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.cbx-b.done{color:var(--accent);border-color:var(--accent)}
+.cbx-p{padding:14px 16px;margin:0;color:var(--ink);font-family:'JetBrains Mono',monospace;
+  font-size:12px;line-height:1.7;white-space:pre-wrap;overflow-x:auto;max-height:420px;overflow-y:auto}
+
+.dlb{display:flex;align-items:center;gap:14px;text-decoration:none;margin:14px 0;width:100%;
+  text-align:left;font-family:inherit;cursor:pointer;
+  background:var(--white);border:1px solid var(--accent);border-radius:var(--radius);
+  padding:14px 18px;transition:.15s}
+.dlb[disabled]{opacity:.5;cursor:default;border-color:var(--border)}
+.dlb:hover{background:var(--accent-soft)}
+.dlb-i{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.dlb-t{display:flex;flex-direction:column;min-width:0}
+.dlb-t b{color:var(--ink);font-size:14.5px;font-weight:700}
+.dlb-t span{color:var(--muted);font-size:12.5px}
+
+.footer{text-align:center;padding:36px;color:var(--muted);font-size:12.5px;
+  border-top:1px solid var(--border);margin-top:36px}
+
+@media (max-width:800px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .toggle{display:block}
+  .main{margin-left:0}
+  .hero{padding:68px 20px 40px}
+  .content{padding:28px 16px 60px}
+  .card{padding:20px}
+  .flow{flex-direction:column}
+  .flow-arrow{transform:rotate(90deg)}
+}
+@media print{
+  .sidebar,.toggle,.cbx-b,.dlb{display:none !important}
+  .main{margin-left:0 !important}
+  .hero{background:#fff;color:#000;padding:0 0 24px}
+  .hero h1,.hero h1 em{color:#000}
+  .hero-c>p,.badge,.hero-tags span{color:#333}
+  .ch,.lec{break-inside:avoid}
+  .card{border:1px solid #ddd}
+}
+</style>
+
+<style>
+.lec{border:1px solid var(--border);border-radius:var(--rlg);margin:22px 0;overflow:hidden;
+  scroll-margin-top:20px}
+.lec-h{display:flex;align-items:baseline;gap:12px;padding:15px 20px;background:var(--panel);
+  border-bottom:1px solid var(--border);flex-wrap:wrap}
+.lec-n{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  color:var(--muted);flex-shrink:0}
+.lec-t{font-weight:700;font-size:16.5px;color:var(--ink);flex:1 1 180px;min-width:0}
+.lec-d{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);flex-shrink:0}
+.lec-b{padding:22px 20px}
+.lec-b>p{font-size:15px}
+.say{border-left:3px solid var(--accent);padding:2px 0 2px 16px;margin:0 0 20px}
+.say .sl{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin-bottom:5px}
+.say p{color:var(--ink);font-size:15.5px;margin:0;font-style:italic;line-height:1.6}
+.ecr{display:grid;grid-template-columns:auto 1fr;gap:9px 18px;margin:18px 0;align-items:baseline;
+  padding:16px 18px;background:var(--panel);border-radius:var(--radius)}
+.ecr dt{font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);
+  font-weight:700;white-space:nowrap}
+.ecr dd{margin:0;font-size:14.5px;color:var(--soft)}
+.ecr dd b{color:var(--ink)}
+@media (max-width:560px){.ecr{grid-template-columns:1fr;gap:2px}.ecr dd{margin-bottom:10px}}
+.clics{counter-reset:k;list-style:none;padding:0;margin:10px 0 4px}
+.clics li{counter-increment:k;position:relative;padding:8px 0 8px 34px;
+  border-bottom:1px solid var(--border);font-size:14.5px;color:var(--soft);line-height:1.6}
+.clics li:last-child{border-bottom:none}
+.clics li::before{content:counter(k);position:absolute;left:0;top:8px;
+  color:var(--muted);font-size:11.5px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.clics li b{color:var(--ink)}
+.hc2{font-size:13.5px;color:var(--muted);border-top:1px solid var(--border);
+  padding-top:12px;margin-top:16px}
+.hc2 b{color:var(--soft)}
+</style>
+
+<style>.ch{margin-bottom:0}#prepa{scroll-margin-top:20px}</style>
+
+<button class="toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<nav class="sidebar">
+  <div class="logo">⚙️ Make</div>
+  <div class="sub">Livret de tournage · Studeria</div>
+  <div class="nav-section">🎬 Avant de tourner</div>
+  <a href="#prepa"><span class="n">•</span>Le plateau et les données</a>
+  <div class="div"></div>
+  <div class="nav-section">📖 Les leçons</div>
+  <a href="#L01"><span class="n">01</span>À quoi sert une automatisation</a>
+  <a href="#L02"><span class="n">02</span>Un scénario, vu de haut</a>
+  <a href="#L03"><span class="n">03</span>Ce que ça coûte vraiment</a>
+  <a href="#L04"><span class="n">04</span>Le point de départ</a>
+  <a href="#L05"><span class="n">05</span>Attraper les demandes</a>
+  <a href="#L06"><span class="n">06</span>Écrire dans la base</a>
+  <a href="#L07"><span class="n">07</span>Ne garder que les vraies demandes</a>
+  <a href="#L08"><span class="n">08</span>Extraire le besoin avec l'IA</a>
+  <a href="#L09"><span class="n">09</span>Traiter selon l'enjeu</a>
+  <a href="#L10"><span class="n">10</span>Préparer la réponse</a>
+  <a href="#L11"><span class="n">11</span>Quand ça casse, et la checklist</a>
+</nav>
+
+<div class="main">
+<div class="hero"><div class="hero-c">
+  <span class="badge">🎬 Focus outils · Outil 2</span>
+  <h1>Tourner le chapitre <em>Make</em></h1>
+  <p>11 leçons, 1 h 20. On branche la base du chapitre Airtable sur la boîte mail.</p>
+  <div class="hero-tags"><span><span class="ic">📋</span>11 leçons · 1 h 20</span><span><span class="ic">🔑</span>Compte gratuit neuf</span><span><span class="ic">⏱️</span>1 h de préparation</span><span><span class="ic">📊</span>5 mails à envoyer la veille</span></div>
+</div></div>
+
+<div class="content">
+<div class="ch" id="prepa">
+  <div class="card">
+<p><strong>11 leçons, 1 h 20.</strong> Le cas pratique : l'apprenant reçoit ses demandes par mail et
+les recopie à la main dans la base Airtable. On automatise la chaîne complète — réception, tri,
+extraction du besoin, brouillon de réponse.</p>
+
+<div class="tip info"><span class="tip-i">🔗</span><div class="tip-c"><strong>On repart de la base du chapitre 1</strong>
+Telle quelle, sans rien recréer. C'est ce qui fait sentir à l'apprenant qu'il construit un système
+et non une suite d'exercices.</div></div>
+
+<h3>À avoir sur le plateau avant de commencer</h3>
+<div class="prereq"><div class="pl">🔑 Comptes, onglets, fichiers</div>
+<ul>
+  <li>Un compte Make gratuit <strong>neuf</strong> — le compteur de crédits doit être intact à l'image</li>
+  <li>Une <strong>boîte Gmail de test</strong> dédiée, jamais utilisée ailleurs. Elle resservira au chapitre n8n</li>
+  <li>Les <strong>5 mails envoyés la veille</strong>, depuis 5 adresses différentes, étalés sur la journée</li>
+  <li>La <strong>clé API</strong> du modèle d'IA, générée avant, rangée dans un gestionnaire de mots de passe</li>
+  <li>Le <strong>scénario fini</strong> et le <strong>scénario cassé</strong>, construits en répétition</li>
+  <li>Onglet : make.com/en/pricing</li>
+  <li>La base Airtable du chapitre 1, et sa clé d'accès préparée hors caméra</li>
+</ul></div>
+
+<h3>Les cinq mails — à envoyer la veille</h3>
+<div class="tw"><table><thead><tr><th>Mail</th><th>Expéditeur</th><th>Rôle</th><th>Leçon qui en dépend</th></tr></thead><tbody><tr><td>1</td><td>Clinique des Tilleuls</td><td>Demande nette, ~600 €</td><td>9 — branche basse</td></tr><tr><td>2</td><td>Diallo Transports</td><td>Demande nette, 16 000 €</td><td>9 — branche haute</td></tr><tr><td>3</td><td>Rinaldi Traiteur</td><td>Pas de besoin net, montant flou</td><td>8 — l&#x27;IA le démêle, puis 9 en branche basse</td></tr><tr><td>4</td><td>Lettre du dirigeant</td><td>Bruit</td><td>7 — filtre</td></tr><tr><td>5</td><td>Facture d&#x27;hébergeur</td><td>Bruit</td><td>7 — filtre</td></tr></tbody></table></div><div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Mail 1 — demande claire, petit montant</span>
+    <button class="cbx-b" onclick="cp(this,'d49')">Copier</button></div>
+  <pre id="d49" class="cbx-p">De : Karim Benaïssa &lt;k.benaissa@cliniquedestilleuls.fr&gt;
+À : contact@[boîte de test]
+Objet : Prise de rendez-vous en ligne pour la clinique
+
+Bonjour,
+
+Nous sommes une clinique vétérinaire de trois praticiens à Villeurbanne. Aujourd&#x27;hui, les
+rendez-vous se prennent au téléphone et notre assistante passe une bonne partie de sa
+journée à décrocher.
+
+Nous voudrions mettre en place une prise de rendez-vous en ligne, simple, reliée à nos
+plannings. Nous avons prévu une enveloppe d&#x27;environ 600 € pour démarrer, quitte à faire
+évoluer ensuite.
+
+Est-ce que c&#x27;est quelque chose que vous faites ? Et dans quel délai ?
+
+Bien cordialement,
+Karim Benaïssa
+Clinique vétérinaire des Tilleuls</pre>
+</div><div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Mail 2 — demande claire, gros montant</span>
+    <button class="cbx-b" onclick="cp(this,'d50')">Copier</button></div>
+  <pre id="d50" class="cbx-p">De : Direction &lt;direction@diallo-transports.fr&gt;
+À : contact@[boîte de test]
+Objet : Automatisation de la saisie des bons de livraison — demande de chiffrage
+
+Bonjour,
+
+Nous exploitons une flotte de dix-huit véhicules et traitons environ 300 bons de livraison
+par mois. Aujourd&#x27;hui, chaque bon est ressaisi à la main dans notre outil de facturation
+par une personne à mi-temps, avec les erreurs que cela suppose.
+
+Nous souhaitons automatiser cette chaîne de bout en bout : réception du bon, extraction des
+informations, écriture dans l&#x27;outil de facturation, et alerte en cas d&#x27;incohérence.
+
+Le budget validé par la direction est de 16 000 € pour l&#x27;ensemble du projet, formation des
+équipes comprise. Nous visons une mise en service au premier trimestre.
+
+Pouvez-vous nous adresser une proposition ?
+
+Cordialement,
+Aïssatou Diallo
+Diallo Transports</pre>
+</div><div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Mail 3 — le mail confus</span>
+    <button class="cbx-b" onclick="cp(this,'d51')">Copier</button></div>
+  <pre id="d51" class="cbx-p">De : Sofiane Rinaldi &lt;s.rinaldi@rinaldi-traiteur.fr&gt;
+À : contact@[boîte de test]
+Objet : (sans objet)
+
+bonjour
+
+on nous a donné votre nom je sais plus par qui en fait c&#x27;était au salon de la gastronomie
+en septembre bref
+
+on est un traiteur on fait surtout de l&#x27;événementiel entreprise et depuis cet été ça part
+dans tous les sens les devis on les fait sur word on les retrouve plus la moitié du temps
+et après on sait plus qui a dit oui qui a dit non et les commandes fournisseurs c&#x27;est
+encore autre chose
+
+on avait parlé de quelque chose autour de 4 000 enfin je sais pas trop faut voir ce que ça
+donne et ce qui est possible aussi je veux pas m&#x27;engager sur un truc énorme
+
+vous faites quoi exactement vous pouvez m&#x27;expliquer
+
+merci
+sofiane</pre>
+</div><div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Mail 4 — hors périmètre, newsletter</span>
+    <button class="cbx-b" onclick="cp(this,'d52')">Copier</button></div>
+  <pre id="d52" class="cbx-p">De : La lettre du dirigeant &lt;lettre@veille-entrepreneurs.fr&gt;
+À : contact@[boîte de test]
+Objet : [Lettre #142] Les cinq chiffres de la semaine, et ce qu&#x27;ils changent pour vous
+
+Bonjour,
+
+Au sommaire cette semaine :
+
+— Le coût moyen d&#x27;un recrutement raté dans les TPE
+— Trois aides régionales qui se terminent le 31 décembre
+— Pourquoi vos clients ne lisent pas vos relances
+— L&#x27;agenda des salons du trimestre
+
+Bonne lecture.
+
+Se désinscrire · Gérer ses préférences · Voir dans le navigateur</pre>
+</div><div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Mail 5 — hors périmètre, facture</span>
+    <button class="cbx-b" onclick="cp(this,'d53')">Copier</button></div>
+  <pre id="d53" class="cbx-p">De : Facturation &lt;facturation@hebergeur-exemple.fr&gt;
+À : contact@[boîte de test]
+Objet : Votre facture n° FA-2026-10-0931 est disponible
+
+Bonjour,
+
+Votre facture du mois d&#x27;octobre est disponible dans votre espace client.
+
+Montant : 23,88 € TTC
+Échéance : prélèvement automatique le 15/10/2026
+Référence : FA-2026-10-0931
+
+Ce message est automatique, merci de ne pas y répondre.</pre>
+</div>
+<div class="tip warn"><span class="tip-i">⏰</span><div class="tip-c"><strong>Les étaler sur la veille</strong>
+Remplacer <code>contact@[boîte de test]</code> par l'adresse réelle. Cinq mails envoyés dans la même
+minute donnent un historique qui ne ressemble à rien à l'écran.</div></div>
+
+<h3>Partie 1 — Les bases</h3>
+
+<div class="lec" id="L01">
+  <div class="lec-h"><span class="lec-n">01</span><span class="lec-t">À quoi sert une automatisation</span><span class="lec-d">6 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Il y a des choses que vous faites toutes les semaines, toujours pareil. Ce sont celles-là qu'on va confier à une machine. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Rien. Vidéo parlée, face caméra, ou un simple schéma.</dd><dt>Données</dt><dd>Aucune.</dd><dt>À annoncer</dt><dd>Le cas du chapitre : les demandes qui arrivent par mail et finissent recopiées à la main.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Poser les trois questions qui disent si une tâche est automatisable : <b>est-ce qu'elle revient ?</b> est-ce qu'elle suit toujours les mêmes règles ? est-ce que l'erreur se voit ?</li><li>Donner deux exemples qui passent le test, et <b>un qui ne le passe pas</b> — décider d'un prix, par exemple.</li><li>Annoncer le cas pratique du chapitre.</li></ol>
+    <div class="analogy"><div class="al">🧺 La machine à laver</div>
+<p>Personne ne lave son linge à la main en 2026. Pas parce que c'est compliqué, mais parce que c'est
+toujours le même geste. Une automatisation, c'est ça : on ne confie pas à la machine ce qui demande
+du jugement, on lui confie ce qui demande de la répétition.</p></div>
+    <p class="hc2"><b>Hors champ :</b> Make, qui ne s'ouvre pas encore. Et les autres outils d'automatisation : la comparaison n'est pas le sujet ici.</p>
+  </div>
+</div>
+<div class="lec" id="L02">
+  <div class="lec-h"><span class="lec-n">02</span><span class="lec-t">Un scénario, vu de haut</span><span class="lec-d">7 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Un déclencheur, des modules, des connexions. Trois mots, et on a le vocabulaire. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Le <b>scénario fini</b>, construit en répétition, ouvert en grand.</dd><dt>Données</dt><dd>Aucune. On ne lance rien, on regarde.</dd><dt>Pourquoi montrer la fin d'abord</dt><dd>L'apprenant sait où il va. Sans ça, les huit leçons suivantes ressemblent à des clics sans but.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Ouvrir le scénario fini.</li><li>Nommer les trois éléments en les pointant : le <b>déclencheur</b> (la bulle de gauche), les <b>modules</b> (les bulles suivantes), les <b>connexions</b> (les traits).</li><li>Suivre le chemin d'un mail du début à la fin, avec le curseur.</li><li>Dire ce qui va être construit dans les huit prochaines leçons, et dans quel ordre.</li></ol>
+    
+    <p class="hc2"><b>Hors champ :</b> La construction. On ne clique sur rien. Cette leçon est une visite guidée, pas un atelier.</p>
+  </div>
+</div>
+<div class="lec" id="L03">
+  <div class="lec-h"><span class="lec-n">03</span><span class="lec-t">Ce que ça coûte vraiment</span><span class="lec-d">6 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Make se paie en opérations. Il faut savoir ce qui en consomme avant de construire. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>make.com/en/pricing, puis le compteur du compte neuf.</dd><dt>Données</dt><dd>Aucune. <b>Lire les chiffres à l'écran</b>, dire la date du jour.</dd><dt>Le calcul à poser</dt><dd>Un déclencheur réglé toutes les 15 minutes = <b>96 réveils par jour</b>, même quand aucun mail n'arrive.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Ouvrir la page de tarifs, dire la date.</li><li>Lire le nombre d'opérations du plan gratuit.</li><li>Expliquer ce qu'est une <b>opération</b> : chaque module qui s'exécute, pas chaque scénario.</li><li><b>Poser le calcul des 96 réveils à l'écran</b>, à la main. Ce chiffre est repris en leçon 11.</li><li>Montrer le compteur du compte, intact.</li></ol>
+    <div class="tip warn"><span class="tip-i">🔢</span><div class="tip-c"><strong>Le chiffre des 96 réveils, à garder</strong>
+Il revient en leçon 11, dans les trois causes de crédits qui filent. Le poser proprement ici évite
+de le réexpliquer à la fin.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Les offres entreprise et les add-ons. On reste sur ce que l'apprenant aura devant lui.</p>
+  </div>
+</div>
+<h3>Partie 2 — Le cas pratique : automatiser ses demandes entrantes</h3>
+
+<div class="lec" id="L04">
+  <div class="lec-h"><span class="lec-n">04</span><span class="lec-t">Le point de départ</span><span class="lec-d">6 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Six minutes par demande, quinze demandes par semaine. Faisons le calcul ensemble. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>La boîte Gmail de test, puis la base Airtable. <b>Make n'apparaît pas.</b></dd><dt>Données</dt><dd>Les 5 mails, déjà arrivés. La base du chapitre 1.</dd><dt>À avoir sous la main</dt><dd>Un <b>chronomètre</b>, visible ou non, mais qui tourne vraiment.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Ouvrir la boîte, montrer les cinq mails arrivés.</li><li>Prendre le mail 1 et faire la <b>saisie manuelle complète</b> dans la table Demandes : lire le mail, recopier la date, l'adresse de l'expéditeur, le corps de la demande. <b>Montre en main.</b></li><li>Annoncer le temps obtenu. <b>Ne pas l'arrondir.</b></li><li>Multiplier par le volume annoncé, à l'écran.</li><li>Dire ce qu'on va supprimer dans les sept leçons suivantes.</li></ol>
+    <div class="tip err"><span class="tip-i">⏱️</span><div class="tip-c"><strong>Chronométrer pour de vrai</strong>
+Le chiffre obtenu est repris tel quel en leçon 11. S'il est inventé, la fin du chapitre sonne faux
+— et l'apprenant, lui, fera le calcul chez lui.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Make. Cette leçon se tourne dans la boîte mail et dans la base. L'outil n'apparaît pas — c'est ce qui rend la suite désirable.</p>
+  </div>
+</div>
+<div class="lec" id="L05">
+  <div class="lec-h"><span class="lec-n">05</span><span class="lec-t">Attraper les demandes</span><span class="lec-d">8 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Le déclencheur, c'est ce qui réveille le scénario. Mal réglé, il vide ton quota avant d'avoir servi. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Make, scénario vide. La boîte de test sur un second écran.</dd><dt>Données</dt><dd>Les 5 mails de test.</dd><dt>La nuance à dire</dt><dd>Le module Gmail <b>« Watch emails » n'est pas instantané</b> : c'est un déclencheur programmé. Les déclencheurs vraiment instantanés sont les <b>webhooks</b>, et tous les services n'en proposent pas.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Poser le module <b>Gmail › Watch emails</b>, connecter la boîte de test.</li><li><b>Montrer le réglage d'intervalle et où il se situe.</b> Choisir une valeur, et dire pourquoi celle-là.</li><li>Exécuter une fois.</li><li><b>Dérouler la sortie du module</b> et repérer à l'écran : expéditeur, objet, corps du message.</li><li>Énoncer le réflexe : <b>on lit la sortie d'un module avant d'écrire la suite.</b> C'est la règle propriétaire de cette leçon, elle sert dans tout le parcours.</li></ol>
+    <div class="warning-big"><div class="wl">🚫 Ne pas annoncer « on va faire ça en temps réel »</div>
+<p>Ce serait faux sur Gmail, et l'apprenant s'en apercevra en construisant. Dire la vérité : c'est
+une surveillance périodique, et voilà comment on choisit la période.</p></div>
+    <p class="hc2"><b>Hors champ :</b> Les webhooks, qu'on cite sans les construire. Et aucun autre module que le déclencheur : la suite se pose en leçon 6.</p>
+  </div>
+</div>
+<div class="lec" id="L06">
+  <div class="lec-h"><span class="lec-n">06</span><span class="lec-t">Écrire dans la base</span><span class="lec-d">8 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« On relie Make à l'Airtable qu'on a construit au chapitre précédent. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Make, avec le déclencheur de la leçon 5. Airtable sur un second écran.</dd><dt>Où Make écrit</dt><dd>Dans la table <b>Demandes</b> de la base Cabinet — celle créée au chapitre Airtable, leçon 11. Trois colonnes : <b>Reçue le</b>, <b>Expéditeur</b>, <b>Demande</b>.</dd><dt>Hors caméra</dt><dd>La <b>clé d'accès Airtable</b> est déjà créée et t'attend dans le gestionnaire de mots de passe. Rien à générer : tu l'y copies, tu la colles.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Ajouter le module <b>Airtable › Create a record</b>.</li><li>Connecter le compte. <b>Dire</b> qu'on a préparé la clé hors caméra, et pourquoi.</li><li>Mapper <b>trois champs seulement</b> : <b>Reçue le</b> ← la date du mail, <b>Expéditeur</b> ← l'adresse de l'expéditeur, <b>Demande</b> ← le corps du message. Les faire glisser depuis la sortie du déclencheur.</li><li>Exécuter.</li><li>Basculer sur Airtable et <b>montrer la ligne apparue</b>.</li></ol>
+    <div class="tip err"><span class="tip-i">🔑</span><div class="tip-c"><strong>C'est le moment où l'on manipule une clé</strong>
+Elle ne doit jamais apparaître à l'écran. Le dire pendant qu'on colle : c'est la seule
+leçon où cette règle s'énonce en entier, ailleurs on la rappellera en trois mots.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Le mapping de tous les champs de la base. Trois champs suffisent à faire comprendre le geste — et c'est la leçon propriétaire de la règle sur les clés.</p>
+  </div>
+</div>
+<div class="lec" id="L07">
+  <div class="lec-h"><span class="lec-n">07</span><span class="lec-t">Ne garder que les vraies demandes</span><span class="lec-d">7 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Tout ce qui arrive dans ta boîte n'est pas une demande. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Le scénario à deux modules de la leçon 6.</dd><dt>Données</dt><dd>Les deux mails hors périmètre : la <b>newsletter</b> et la <b>facture</b>.</dd><dt>Le risque à nommer</dt><dd>Un filtre mal posé, et la base se remplit de newsletters.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Relancer le scénario <b>sans filtre</b> : la newsletter et la facture entrent dans la base. Le montrer.</li><li>Supprimer les deux lignes parasites dans Airtable.</li><li>Poser un <b>filtre</b> sur la connexion, simple, sur l'objet du mail.</li><li>Relancer.</li><li>Ouvrir l'historique et <b>montrer le mail bloqué</b> : il est arrivé, il n'est pas passé.</li></ol>
+    
+    <p class="hc2"><b>Hors champ :</b> Les fonctions de texte et les expressions complexes. Un filtre simple sur l'objet, pas une leçon de syntaxe.</p>
+  </div>
+</div>
+<div class="lec" id="L08">
+  <div class="lec-h"><span class="lec-n">08</span><span class="lec-t">Extraire le besoin avec l'IA</span><span class="lec-d">9 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Le mail dit tout, mais en désordre. On va demander à l'IA de le ranger. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Le scénario filtré de la leçon 7.</dd><dt>Données</dt><dd>Le <b>mail 3</b>, le plus confus des cinq — pas de ponctuation, besoin flou, montant mou.</dd><dt>Hors caméra</dt><dd>La <b>clé API</b> du modèle est déjà créée et t'attend dans le gestionnaire de mots de passe. Rien à générer le jour du tournage : tu la copies, tu la colles. Rappel en trois mots, pas de réexplication.</dd><dt>Pourquoi cette leçon vient avant le routeur</dt><dd>Le scénario ne connaît aucun montant pour l'instant : ils sont noyés dans le texte des mails. L'IA les en sort ici, et c'est seulement après qu'on peut trier dessus.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Ajouter le module d'IA, coller la clé depuis le gestionnaire.</li><li>Première exécution avec une consigne <b>en texte libre</b> : « résume cette demande ». Montrer le paragraphe obtenu — <b>inexploitable pour remplir des champs</b>.</li><li>Deuxième exécution avec la consigne <b>en champs nommés</b> (bloc ci-dessous).</li><li>Montrer les deux sorties <b>côte à côte</b>.</li><li>Mapper <b>montant_evoque</b> et <b>besoin</b> vers deux nouveaux champs de la table Demandes.</li><li>Dire ce que ça consomme, et pourquoi on ne met pas l'IA partout.</li></ol>
+    <div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">La consigne à sortie structurée</span>
+    <button class="cbx-b" onclick="cp(this,'d54')">Copier</button></div>
+  <pre id="d54" class="cbx-p">Lis cette demande entrante et renvoie UNIQUEMENT ces champs,
+un par ligne, sans phrase autour :
+
+besoin :          (une phrase, avec les mots du client)
+montant_evoque :  (un nombre seul, ou « non precise »)
+urgence :         (faible / moyenne / forte)
+info_manquante :  (ce qu&#x27;il faudrait demander pour chiffrer)
+
+N&#x27;invente aucune information absente du message.
+Si un champ est introuvable, écris « non precise ».
+
+Message :
+{{corps du mail}}</pre>
+</div>
+    <p class="hc2"><b>Hors champ :</b> La clé API à l'écran, jamais. Et la comparaison entre modèles : le choix du modèle n'est pas le sujet.</p>
+  </div>
+</div>
+<div class="lec" id="L09">
+  <div class="lec-h"><span class="lec-n">09</span><span class="lec-t">Traiter selon l'enjeu</span><span class="lec-d">8 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Une demande à 600 € et une à 16 000 €, ça ne mérite pas la même réaction. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Le scénario de la leçon 8, avec le champ <b>montant_evoque</b> rempli par l'IA.</dd><dt>Données</dt><dd>Le <b>mail 1</b> (~600 €) et le <b>mail 2</b> (16 000 €).</dd><dt>Pourquoi cet écart</dt><dd>Les montants sont volontairement très éloignés. Avec 600 € et 900 €, la démonstration ne se verrait pas.</dd><dt>Ce qui rend le tri possible</dt><dd>Le routeur lit <b>montant_evoque</b>, le champ que l'IA vient de produire. Sans la leçon 8, il n'aurait rien à comparer.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Ajouter un <b>routeur</b> après le module d'IA.</li><li>Poser deux branches : <b>montant_evoque &lt; 5 000</b> d'un côté, <b>&ge; 5 000</b> de l'autre.</li><li>Sur la branche haute, ajouter une action différente — un marquage, une étiquette, une seconde ligne.</li><li>Exécuter : les <b>deux branches partent</b>, l'une après l'autre.</li><li>Aller dans Airtable et montrer les <b>deux résultats différents</b>.</li><li>Montrer aussi le <b>mail 3</b> : son montant est mou, l'IA a sorti 4 000, il part dans la branche basse. Dire que c'est une décision prise sur une donnée incertaine — et que c'est pour ça qu'un humain relit.</li></ol>
+    
+    <p class="hc2"><b>Hors champ :</b> Les routeurs à cinq branches et les agrégateurs. Deux branches, deux traitements, et on passe.</p>
+  </div>
+</div>
+<div class="lec" id="L10">
+  <div class="lec-h"><span class="lec-n">10</span><span class="lec-t">Préparer la réponse</span><span class="lec-d">8 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« On génère la réponse. On ne l'envoie pas. Jamais. »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Le scénario de la leçon 9, puis Gmail.</dd><dt>Données</dt><dd>Le modèle de réponse (bloc ci-dessous).</dd><dt>La règle propriétaire</dt><dd>C'est ici que s'énonce en entier la règle du parcours : <b>rien ne part sans relecture</b>. Ailleurs, on la rappellera en trois mots.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Ajouter un module d'IA qui rédige la réponse, avec la trame ci-dessous.</li><li>Ajouter <b>Gmail › Create a draft</b> — <b>pas</b> Send an email. Le dire en le choisissant.</li><li>Exécuter.</li><li>Ouvrir le brouillon dans Gmail et <b>le relire à l'écran</b>.</li><li>Fermer sans envoyer. <b>Le dire.</b></li><li>Expliquer pourquoi on ne franchit pas cette ligne, même quand le client le demande.</li></ol>
+    <div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">La trame du modèle de réponse</span>
+    <button class="cbx-b" onclick="cp(this,'d55')">Copier</button></div>
+  <pre id="d55" class="cbx-p">Tu rédiges un accusé de réception à une demande entrante, pour un cabinet
+de conseil indépendant.
+
+Contraintes :
+- Vouvoiement.
+- Entre 80 et 120 mots.
+- Reprendre le besoin exprimé en une phrase, avec les mots du client.
+- Ne jamais annoncer de prix, de délai ni de disponibilité.
+- Ne jamais inventer un élément absent du mail.
+- Terminer par une question unique, celle qui débloque la suite.
+- Signer « [Prénom du consultant] ».
+
+Si le besoin n&#x27;est pas clair, le dire franchement et poser la question
+qui manque, plutôt que de supposer.
+
+Demande reçue :
+{{corps du mail}}</pre>
+</div><div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Le brouillon attendu, pour le mail 1</span>
+    <button class="cbx-b" onclick="cp(this,'d56')">Copier</button></div>
+  <pre id="d56" class="cbx-p">Bonjour Karim,
+
+Merci pour votre message. Si je comprends bien, vous cherchez à sortir la
+prise de rendez-vous du téléphone pour libérer du temps à votre assistante,
+en gardant le lien avec les plannings des trois praticiens.
+
+Avant de vous répondre précisément, une question : vos plannings sont-ils
+aujourd&#x27;hui tenus dans un outil partagé, ou chacun gère-t-il le sien de son
+côté ? La réponse change beaucoup la façon de s&#x27;y prendre.
+
+Je reviens vers vous dès que vous m&#x27;aurez dit cela.
+
+[Prénom]</pre>
+</div>
+    <p class="hc2"><b>Hors champ :</b> L'envoi réel du mail. Le brouillon est le point final de la leçon, et c'est volontaire.</p>
+  </div>
+</div>
+<h3>Partie 3 — Fiabiliser et livrer</h3>
+
+<div class="lec" id="L11">
+  <div class="lec-h"><span class="lec-n">11</span><span class="lec-t">Quand ça casse, et la checklist</span><span class="lec-d">9 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d'ouverture</div><p>« Ça va casser. La question c'est : est-ce que tu le sauras ? »</p></div>
+    <dl class="ecr"><dt>À l'écran</dt><dd>Le <b>scénario volontairement cassé</b>, préparé avant.</dd><dt>Comment il est cassé</dt><dd>Dans <b>Airtable › Create a record</b>, le champ <b>Reçue le</b> (type date) reçoit <b>l'objet du mail</b> au lieu de sa date. Airtable refuse la valeur et l'exécution s'arrête là. Tout le reste du scénario est correct.</dd><dt>Le chiffre à reprendre</dt><dd>Le temps chronométré en <b>leçon 4</b>, et les <b>96 réveils</b> de la leçon 3.</dd></dl>
+    <h4>Les gestes, dans l'ordre</h4>
+    <ol class="clics"><li>Lancer le scénario cassé. <b>Laisser l'erreur tomber.</b></li><li>Ouvrir l'historique, cliquer sur l'exécution en échec, dérouler les bulles.</li><li>Montrer <b>où</b> ça casse, et <b>ce que disait le module précédent</b> — la sortie qu'on a appris à lire en leçon 5.</li><li><b>Lire le message d'erreur tel qu'il s'affiche.</b> Ne pas l'annoncer de mémoire.</li><li>Corriger le mapping, relancer, voir passer.</li><li>Poser un <b>gestionnaire d'erreurs</b> sur le module.</li><li>Dérouler les trois causes de crédits qui filent, puis montrer le <b>tableau de consommation</b> et où régler l'alerte.</li><li>Reprendre le chiffre de la leçon 4 et dire ce qu'on a supprimé comme travail.</li></ol>
+    <h4>Les trois causes de crédits qui filent</h4>
+<div class="vg">
+  <div class="vc"><div class="vt">Déclencheur trop fréquent</div><div class="vd">Reprendre le calcul des 96 réveils par jour de la leçon 3.</div></div>
+  <div class="vc"><div class="vt">Boucle non maîtrisée</div><div class="vd">Un module qui tourne autant de fois qu'il y a d'éléments, sans qu'on l'ait prévu.</div></div>
+  <div class="vc"><div class="vt">IA appelée trop tôt</div><div class="vd">Un module d'IA exécuté à chaque itération, alors qu'un filtre placé avant l'aurait évité.</div></div>
+</div>
+<div class="tip err"><span class="tip-i">❗</span><div class="tip-c"><strong>La règle qui en découle</strong>
+On filtre AVANT d'appeler l'IA, jamais après. C'est la phrase à retenir de tout le chapitre.</div></div>
+<div class="tip ok"><span class="tip-i">✅</span><div class="tip-c"><strong>Make est bouclé</strong>
+Le chapitre suivant refait exactement ce scénario, mais sur une instance qui appartient au client.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Les gestionnaires d'erreurs avancés et les scénarios de reprise. On lit une erreur, on la corrige, on pose une alerte.</p>
+  </div>
+</div></div>
+</div>
+<div class="footer">
+  <p><strong>⚙️ Livret de tournage — Make</strong></p>
+  <p>Studeria · parcours Focus outils · octobre 2026</p>
+</div>
+</div></div>
+
+<script>
+const links=document.querySelectorAll('.sidebar a');
+const chapters=document.querySelectorAll('.ch');
+function updateActive(){
+  let current='';
+  chapters.forEach(ch=>{if(ch.getBoundingClientRect().top<=150)current=ch.id;});
+  links.forEach(l=>{l.classList.toggle('active',l.getAttribute('href')==='#'+current);});
+}
+window.addEventListener('scroll',updateActive);updateActive();
+links.forEach(l=>l.addEventListener('click',()=>{
+  if(window.innerWidth<=800)document.querySelector('.sidebar').classList.remove('open');
+}));
+let DL=null;
+(async()=>{
+  try{DL=await window.claude.use("downloads");}catch(e){DL=null;}
+  if(!DL)document.querySelectorAll(".dlb").forEach(b=>{
+    b.disabled=true;
+    const s=b.querySelector(".dlb-t span");
+    if(s)s.textContent="T\u00e9l\u00e9chargement indisponible dans cette vue \u2014 demander le fichier \u00e0 Massylia";
+  });
+})();
+async function tele(btn){
+  if(!DL)return;
+  const b64=btn.querySelector("script").textContent.trim();
+  const bin=atob(b64);const u=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+  const lbl=btn.querySelector(".dlb-t b");const o=lbl.textContent;
+  try{
+    await DL.save({filename:btn.dataset.nom,data:new Blob([u])});
+    lbl.textContent="Enregistr\u00e9 \u2713";
+  }catch(e){
+    lbl.textContent=(e&&e.code==="declined")?o:"Non enregistr\u00e9";
+  }
+  setTimeout(()=>{lbl.textContent=o;},2200);
+}
+function cp(btn,id){
+  const t=document.getElementById(id).textContent;
+  const done=()=>{const o=btn.textContent;btn.textContent='Copie\u0301 \u2713';btn.classList.add('done');
+    setTimeout(()=>{btn.textContent=o;btn.classList.remove('done');},1600);};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(done).catch(()=>fb());}
+  else fb();
+  function fb(){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';
+    a.style.opacity='0';document.body.appendChild(a);a.select();
+    try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(a);}
+}
+</script>
+
+</body></html>
